@@ -12,6 +12,7 @@ import {
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import SendIcon from '@mui/icons-material/Send';
+import { useNavigate } from 'react-router-dom'; 
 import { loginUsuario } from '../api/auth';
 
 const style = {
@@ -34,6 +35,7 @@ const LoginForm = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +47,7 @@ const LoginForm = () => {
       const token = await loginUsuario(numeroId, contrasena);
       localStorage.setItem('token', token);
       setIsSuccess(true);
-      setModalMessage('Bienvenido, Obando!');
+      setModalMessage('Bienvenido, Adminitrador!');
     } catch (err) {
       setIsSuccess(false);
       setModalMessage(err.message);
@@ -59,10 +61,13 @@ const LoginForm = () => {
     if (modalOpen) {
       const timer = setTimeout(() => {
         setModalOpen(false);
+        if (isSuccess) {
+          navigate('/home'); 
+        }
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [modalOpen]);
+  }, [modalOpen, isSuccess, navigate]);
 
   return (
     <>
@@ -138,37 +143,64 @@ const LoginForm = () => {
         </Button>
       </Box>
 
+      {/* Modal */}
       <Modal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => !isSuccess && setModalOpen(false)} 
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 300,
           sx: {
             backgroundColor: 'rgba(0, 0, 0, 0.4)',
-            backdropFilter: 'blur(2px)'
+            backdropFilter: 'blur(4px)'
           }
         }}
       >
         <Fade in={modalOpen}>
-          <Box sx={style}>
+          <Box
+            sx={{
+              ...style,
+              borderLeft: `10px solid ${isSuccess ? '#4caf50' : '#f44336'}`,
+              backgroundColor: isSuccess ? '#e8f5e9' : '#ffebee'
+            }}
+          >
             {isSuccess ? (
-              <CheckCircleOutlineIcon sx={{ fontSize: 60, color: 'success.main', mb: 2 }} />
+              <CheckCircleOutlineIcon sx={{ fontSize: 60, color: '#4caf50', mb: 1 }} />
             ) : (
-              <ErrorOutlineIcon sx={{ fontSize: 60, color: 'error.main', mb: 2 }} />
+              <ErrorOutlineIcon sx={{ fontSize: 60, color: '#f44336', mb: 1 }} />
             )}
             <Typography
               variant="h6"
-              color={isSuccess ? 'success.main' : 'error.main'}
               fontWeight="bold"
+              color={isSuccess ? 'success.main' : 'error.main'}
               gutterBottom
             >
+              {isSuccess ? '¡Éxito!' : 'Error'}
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 2 }}>
               {modalMessage}
             </Typography>
+
+            {!isSuccess && (
+              <Button
+                onClick={() => setModalOpen(false)}
+                variant="contained"
+                sx={{
+                  mt: 2,
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  '&:hover': { backgroundColor: '#d32f2f' }
+                }}
+              >
+                Cerrar
+              </Button>
+            )}
           </Box>
         </Fade>
       </Modal>
+
     </>
   );
 };

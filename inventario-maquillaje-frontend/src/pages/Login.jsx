@@ -15,7 +15,7 @@ const Login = () => {
       <Box
         sx={{
           flex: 1,
-          backgroundImage: 'url("/images/logo.png")',
+          backgroundImage: 'url("/images/logo.jpeg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
