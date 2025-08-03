@@ -100,7 +100,7 @@ const VerVentasTabla = () => {
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant="h5" fontWeight="bold" color="#e91e63">
           Historial de Ventas
         </Typography>
         <ReceiptLongIcon sx={{ fontSize: 32, color: '#e91e63' }} />

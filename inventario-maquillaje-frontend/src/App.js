@@ -6,6 +6,7 @@ import Productos from './pages/Products';
 import Invenatarios from './pages/Inventarios';
 import CambioEstado from './pages/CambioEstado'; 
 import Ventas from './pages/Ventas';
+import Reportes from './pages/Reportes';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/inventarios" element={<Invenatarios />} />
         <Route path="/cambio-estado" element={<CambioEstado />} /> {}
         <Route path="/ventas" element={<Ventas />} />
+        <Route path="/reportes" element={<Reportes />} />
       </Routes>
     </Router>
   );

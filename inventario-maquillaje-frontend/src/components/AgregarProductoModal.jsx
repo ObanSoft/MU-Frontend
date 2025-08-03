@@ -44,7 +44,8 @@ const modalStyle = {
 const AgregarProductoModal = ({ onProductoAgregado }) => {
   const [open, setOpen] = useState(false);
   const [nombre, setNombre] = useState('');
-  const [precio, setPrecio] = useState('');
+  const [precioVenta, setPrecioVenta] = useState('');
+  const [precioCompra, setPrecioCompra] = useState('');
   const [cantidad, setCantidad] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -53,7 +54,8 @@ const AgregarProductoModal = ({ onProductoAgregado }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setNombre('');
-    setPrecio('');
+    setPrecioVenta('');
+    setPrecioCompra('');
     setCantidad(1);
     setOpen(false);
   };
@@ -67,7 +69,7 @@ const AgregarProductoModal = ({ onProductoAgregado }) => {
     setLoading(true);
 
     try {
-      await registrarProducto(nombre, precio, cantidad);
+      await registrarProducto(nombre, precioVenta, precioCompra, cantidad);
       if (onProductoAgregado) onProductoAgregado();
       setAlerta({ open: true, mensaje: 'Producto(s) registrado(s) correctamente.', tipo: 'success' });
       handleClose();
@@ -141,10 +143,26 @@ const AgregarProductoModal = ({ onProductoAgregado }) => {
               />
 
               <TextField
-                label="Precio"
+                label="Precio de Venta"
                 type="number"
-                value={precio}
-                onChange={(e) => setPrecio(e.target.value)}
+                value={precioVenta}
+                onChange={(e) => setPrecioVenta(e.target.value)}
+                required
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoneyIcon sx={{ color: '#e91e63' }} />
+                    </InputAdornment>
+                  )
+                }}
+                sx={campoEstilo}
+              />
+
+              <TextField
+                label="Precio de Compra"
+                type="number"
+                value={precioCompra}
+                onChange={(e) => setPrecioCompra(e.target.value)}
                 required
                 InputProps={{
                   startAdornment: (

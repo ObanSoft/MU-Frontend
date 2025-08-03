@@ -9,6 +9,7 @@ import {
   MenuItem,
   CircularProgress,
   Alert,
+  Typography,
 } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { obtenerProductosDisponibles, crearVenta } from '../api/ventas';
@@ -49,8 +50,11 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>
-        <AddShoppingCartIcon sx={{ mr: 1, color: '#e91e63' }} /> Registrar Venta
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', color: '#e91e63' }}>
+        <AddShoppingCartIcon sx={{ mr: 1 }} />
+        <Typography variant="h6" fontWeight="bold" color="#e91e63">
+          Registrar Venta
+        </Typography>
       </DialogTitle>
       <DialogContent>
         <TextField

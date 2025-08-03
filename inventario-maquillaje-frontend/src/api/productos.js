@@ -48,16 +48,16 @@ export const consultarProductoPorIdentificador = async (identificador) => {
   return data;
 };
 
-export const registrarProducto = async (nombre, precio, cantidad = 1) => {
+export const registrarProducto = async (nombre, precio_venta, precio_compra, cantidad = 1) => {
   const token = localStorage.getItem('token');
 
-  const res = await fetch(`${API}/productos/registrar_producto`, { 
+  const res = await fetch(`${API}/productos/registrar_producto`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ nombre, precio, cantidad }),
+    body: JSON.stringify({ nombre, precio_venta, precio_compra, cantidad }),
   });
 
   const data = await res.json();
@@ -65,6 +65,7 @@ export const registrarProducto = async (nombre, precio, cantidad = 1) => {
   if (!res.ok) throw new Error(data.error || 'Error al registrar producto');
   return data;
 };
+
 
 export const eliminarProductoPorIdentificador = async (identificador) => {
   const token = localStorage.getItem('token');

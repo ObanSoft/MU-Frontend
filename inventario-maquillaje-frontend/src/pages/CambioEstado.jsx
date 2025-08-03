@@ -50,7 +50,7 @@ const CambioEstado = () => {
           ml: openSidebar ? '200px' : '60px',
         }}
       >
-        <Typography variant="h5" fontWeight="bold" mb={3}>
+        <Typography variant="h5" fontWeight="bold" mb={3} color='#e91e63'>
           Cambiar estado de producto
         </Typography>
 

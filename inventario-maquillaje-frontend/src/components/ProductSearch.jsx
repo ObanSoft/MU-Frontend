@@ -192,7 +192,7 @@ const ProductSearch = () => {
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant="h5" fontWeight="bold" color="#e91e63">
           Buscar Productos
         </Typography>
         <Button
