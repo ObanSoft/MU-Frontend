@@ -9,23 +9,25 @@ import {
   Fade,
   Backdrop
 } from '@mui/material';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SendIcon from '@mui/icons-material/Send';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { loginUsuario } from '../api/auth';
 
-const style = {
+const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  borderRadius: 2,
-  boxShadow: 24,
+  transform: 'translate(-50%, -50%) scale(1)',
+  width: '90%',
+  maxWidth: 400,
+  bgcolor: '#fff',
+  borderRadius: 4,
+  boxShadow: '0 12px 40px rgba(0,0,0,0.25)',
   p: 4,
-  textAlign: 'center'
+  textAlign: 'center',
+  animation: 'fadeScaleIn 0.4s ease-in-out',
 };
 
 const LoginForm = () => {
@@ -35,7 +37,7 @@ const LoginForm = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,10 +49,10 @@ const LoginForm = () => {
       const token = await loginUsuario(numeroId, contrasena);
       localStorage.setItem('token', token);
       setIsSuccess(true);
-      setModalMessage('Bienvenido, Adminitrador!');
+      setModalMessage('¡Bienvenido a SCP-LUXIMAKEUP!');
     } catch (err) {
       setIsSuccess(false);
-      setModalMessage(err.message);
+      setModalMessage(err.message || 'Ocurrió un error');
     } finally {
       setLoading(false);
       setModalOpen(true);
@@ -61,10 +63,8 @@ const LoginForm = () => {
     if (modalOpen) {
       const timer = setTimeout(() => {
         setModalOpen(false);
-        if (isSuccess) {
-          navigate('/home'); 
-        }
-      }, 3000);
+        if (isSuccess) navigate('/home');
+      }, 3500);
       return () => clearTimeout(timer);
     }
   }, [modalOpen, isSuccess, navigate]);
@@ -81,7 +81,7 @@ const LoginForm = () => {
           backgroundColor: 'white',
           padding: 6,
           borderRadius: 2,
-          boxShadow: 15
+          boxShadow: 15,
         }}
       >
         <TextField
@@ -93,15 +93,15 @@ const LoginForm = () => {
           InputLabelProps={{
             sx: {
               fontWeight: 'bold',
-              '&.Mui-focused': { color: '#e91e63' }
-            }
+              '&.Mui-focused': { color: '#e91e63' },
+            },
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': { borderColor: '#ccc' },
               '&:hover fieldset': { borderColor: '#e91e63' },
-              '&.Mui-focused fieldset': { borderColor: '#e91e63' }
-            }
+              '&.Mui-focused fieldset': { borderColor: '#e91e63' },
+            },
           }}
         />
 
@@ -115,15 +115,15 @@ const LoginForm = () => {
           InputLabelProps={{
             sx: {
               fontWeight: 'bold',
-              '&.Mui-focused': { color: '#e91e63' }
-            }
+              '&.Mui-focused': { color: '#e91e63' },
+            },
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': { borderColor: '#ccc' },
               '&:hover fieldset': { borderColor: '#e91e63' },
-              '&.Mui-focused fieldset': { borderColor: '#e91e63' }
-            }
+              '&.Mui-focused fieldset': { borderColor: '#e91e63' },
+            },
           }}
         />
 
@@ -135,7 +135,8 @@ const LoginForm = () => {
             mt: 1,
             fontWeight: 'bold',
             backgroundColor: '#e91e63',
-            '&:hover': { backgroundColor: '#c2185b' }
+            '&:hover': { backgroundColor: '#c2185b' },
+            transition: 'all 0.3s ease-in-out',
           }}
           disabled={loading}
         >
@@ -143,55 +144,69 @@ const LoginForm = () => {
         </Button>
       </Box>
 
-      {/* Modal */}
+      {/* MODAL */}
       <Modal
         open={modalOpen}
-        onClose={() => !isSuccess && setModalOpen(false)} 
+        onClose={() => !isSuccess && setModalOpen(false)}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 300,
           sx: {
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
-            backdropFilter: 'blur(4px)'
-          }
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(5px)',
+          },
         }}
       >
         <Fade in={modalOpen}>
           <Box
             sx={{
-              ...style,
-              borderLeft: `10px solid ${isSuccess ? '#4caf50' : '#f44336'}`,
-              backgroundColor: isSuccess ? '#e8f5e9' : '#ffebee'
+              ...modalStyle,
+              background: isSuccess
+                ? 'linear-gradient(135deg, #f0fdf4, #c8e6c9)'
+                : 'linear-gradient(135deg, #fff0f0, #ffcdd2)',
+              border: `2px solid ${isSuccess ? '#66bb6a' : '#ef5350'}`,
             }}
           >
             {isSuccess ? (
-              <CheckCircleOutlineIcon sx={{ fontSize: 60, color: '#4caf50', mb: 1 }} />
+              <CheckCircleIcon sx={{ fontSize: 80, color: '#388e3c', mb: 1 }} />
             ) : (
-              <ErrorOutlineIcon sx={{ fontSize: 60, color: '#f44336', mb: 1 }} />
+              <HighlightOffIcon sx={{ fontSize: 80, color: '#d32f2f', mb: 1 }} />
             )}
+
             <Typography
-              variant="h6"
+              variant="h5"
               fontWeight="bold"
-              color={isSuccess ? 'success.main' : 'error.main'}
-              gutterBottom
+              sx={{
+                color: isSuccess ? '#2e7d32' : '#b71c1c',
+                mb: 1,
+              }}
             >
-              {isSuccess ? '¡Éxito!' : 'Error'}
+              {isSuccess ? '¡Inicio exitoso!' : '¡Ups! Algo salió mal'}
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}>
+
+            <Typography
+              variant="body1"
+              sx={{ fontSize: '1rem', color: '#333', mb: 3 }}
+            >
               {modalMessage}
             </Typography>
 
             {!isSuccess && (
               <Button
                 onClick={() => setModalOpen(false)}
-                variant="contained"
+                variant="outlined"
                 sx={{
-                  mt: 2,
-                  backgroundColor: '#f44336',
-                  color: 'white',
+                  borderRadius: 2,
+                  px: 4,
+                  py: 1,
                   fontWeight: 'bold',
-                  '&:hover': { backgroundColor: '#d32f2f' }
+                  color: '#d32f2f',
+                  borderColor: '#d32f2f',
+                  '&:hover': {
+                    backgroundColor: '#fdecea',
+                    borderColor: '#c62828',
+                  },
                 }}
               >
                 Cerrar
@@ -201,6 +216,21 @@ const LoginForm = () => {
         </Fade>
       </Modal>
 
+      {/* Animación personalizada */}
+      <style>
+        {`
+          @keyframes fadeScaleIn {
+            from {
+              opacity: 0;
+              transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+              opacity: 1;
+              transform: translate(-50%, -50%) scale(1);
+            }
+          }
+        `}
+      </style>
     </>
   );
 };

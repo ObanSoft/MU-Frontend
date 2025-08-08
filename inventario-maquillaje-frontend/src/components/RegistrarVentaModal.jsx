@@ -22,7 +22,10 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
   const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
-    if (open) cargarProductos();
+    if (open) {
+      cargarProductos();
+      limpiarFormulario(); // Limpia el formulario al abrir
+    }
   }, [open]);
 
   const cargarProductos = async () => {
@@ -34,6 +37,12 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
     }
   };
 
+  const limpiarFormulario = () => {
+    setProductoSeleccionado('');
+    setCantidad(1);
+    setMensaje('');
+  };
+
   const registrarVenta = async () => {
     setCargando(true);
     setMensaje('');
@@ -41,6 +50,7 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
       const data = await crearVenta(productoSeleccionado, cantidad);
       setMensaje(data.mensaje);
       onVentaRegistrada();
+      limpiarFormulario(); // Limpia después del registro exitoso
     } catch (err) {
       setMensaje(err.message);
     } finally {
@@ -48,8 +58,13 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
     }
   };
 
+  const handleClose = () => {
+    limpiarFormulario();
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', color: '#e91e63' }}>
         <AddShoppingCartIcon sx={{ mr: 1 }} />
         <Typography variant="h6" fontWeight="bold" color="#e91e63">
@@ -98,7 +113,7 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={onClose}
+          onClick={handleClose}
           sx={{ color: '#e91e63', fontWeight: 'bold' }}
         >
           Cancelar

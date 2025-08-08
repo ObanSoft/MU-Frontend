@@ -54,3 +54,17 @@ export const obtenerDetalleProducto = async (nombre) => {
   if (!res.ok) throw new Error(data.error || 'Error al obtener detalle del producto');
   return data;
 };
+
+export const descargarExcelVentas = async () => {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${API}/reportes/exportar_ventas`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error('Error al descargar Excel');
+
+  const blob = await res.blob();
+  return blob;
+};

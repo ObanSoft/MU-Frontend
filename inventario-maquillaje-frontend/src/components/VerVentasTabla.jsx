@@ -11,6 +11,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid } from '@mui/x-data-grid';
 
 import RegistrarVentaModal from '../components/RegistrarVentaModal';
@@ -21,6 +22,8 @@ import {
   obtenerVentaPorId,
   obtenerMargenVentas,
 } from '../api/ventas';
+
+
 
 const localeText = {
   noRowsLabel: 'No hay ventas registradas',
@@ -72,7 +75,7 @@ const VerVentasTabla = () => {
         return;
       }
 
-      if (/^[A-Z0-9\-]{8,}$/i.test(busqueda)) {
+      if (/^[A-Z0-9\-]{8}$/i.test(busqueda)) {
         const data = await obtenerVentaPorId(busqueda);
         const conId = data.map((v, idx) => ({ ...v, id: idx }));
         setVentas(conId);
@@ -86,6 +89,32 @@ const VerVentasTabla = () => {
       setMensaje(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const descargarExcelVentas = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:5000/reportes/exportar_ventas', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error('Error al descargar el archivo Excel');
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'reporte_ventas.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error al descargar el Excel:', error.message);
+      alert('Hubo un problema al descargar el archivo.');
     }
   };
 
@@ -106,11 +135,25 @@ const VerVentasTabla = () => {
         <ReceiptLongIcon sx={{ fontSize: 32, color: '#e91e63' }} />
       </Box>
 
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
         <Button
           variant="contained"
           onClick={() => setModalOpen(true)}
           startIcon={<AddShoppingCartIcon />}
+          sx={{
+            backgroundColor: '#e91e63',
+            color: 'white',
+            fontWeight: 'bold',
+            '&:hover': { backgroundColor: '#c2185b' },
+          }}
+        >
+          Registrar Venta
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={descargarExcelVentas}
+          startIcon={<DownloadIcon />}
           sx={{
             backgroundColor: '#e91e63',
             color: 'white',
@@ -120,8 +163,9 @@ const VerVentasTabla = () => {
             },
           }}
         >
-          Registrar Venta
+          Descargar Ventas
         </Button>
+
       </Box>
 
       <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>

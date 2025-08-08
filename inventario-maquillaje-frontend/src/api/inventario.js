@@ -30,3 +30,17 @@ export const obtenerResumenInventario = async () => {
     total_inventario_COP: totalData.total_inventario_COP,
   };
 };
+
+export const descargarInventarioExcel = async () => {
+  const token = localStorage.getItem('token');
+  const res = await fetch('http://localhost:5000/reportes/exportar_inventario', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error('Error al descargar inventario');
+
+  const blob = await res.blob();
+  return blob;
+};
