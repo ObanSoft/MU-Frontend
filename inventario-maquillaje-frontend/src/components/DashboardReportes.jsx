@@ -128,10 +128,11 @@ const DashboardReportes = () => {
           <Fade in timeout={800}>
             <Grid container spacing={2}>
               {[
-                { label: 'Vendidos', value: resumen.total_productos_vendidos, color: '#f06292' },
-                { label: 'En Inventario', value: resumen.total_en_inventario, color: '#4dd0e1' },
-                { label: 'Valor Inventario', value: `$${resumen.valor_total_inventario.toLocaleString()}`, color: '#ba68c8' },
-                { label: 'Total Ventas', value: `$${resumen.total_ventas.toLocaleString()}`, color: '#ffb74d' },
+                { label: 'Productos En Inventario', value: resumen.total_en_inventario, color: '#4dd0e1' },
+                { label: 'Total De Inventario', value: `$${resumen.valor_total_inventario.toLocaleString()}`, color: '#ba68c8' },
+                { label: 'Total De Ventas', value: `$${resumen.total_ventas.toLocaleString()}`, color: '#ffb74d' },
+                { label: 'Ventas Individuales', value: resumen.individuales_vendidos, color: '#81c784' },
+                { label: 'Combos Vendidos', value: resumen.combos_vendidos, color: '#64b5f6' }
               ].map((item, i) => (
                 <Grid item xs={12} md={3} key={i}>
                   <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>

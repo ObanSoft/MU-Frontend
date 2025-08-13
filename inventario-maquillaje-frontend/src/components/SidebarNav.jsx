@@ -17,12 +17,14 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 const menuItems = [
   { label: 'Productos', icon: <InventoryIcon />, path: '/productos' },
   { label: 'Ventas', icon: <PointOfSaleIcon />, path: '/ventas' },
   { label: 'Reportes', icon: <BarChartIcon />, path: '/reportes' },
   { label: 'Cambios de Estado', icon: <ChangeCircleIcon />, path: '/cambio-estado' },
+  { label: 'Combos', icon: <ReceiptIcon />, path: '/combos' }
 ];
 
 const SidebarNav = ({ open, toggleOpen }) => {

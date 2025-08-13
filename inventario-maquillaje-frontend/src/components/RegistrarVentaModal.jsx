@@ -14,17 +14,22 @@ import {
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { obtenerProductosDisponibles, crearVenta } from '../api/ventas';
 
+const vendedores = ['Lauren Vanegas', 'Ximena Guerrero', 'Juan Guacaneme', 'Juan Obando'];
+const metodosPago = ['Efectivo', 'Nequi'];
+
 const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
   const [productos, setProductos] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState('');
   const [cantidad, setCantidad] = useState(1);
+  const [vendidoPor, setVendidoPor] = useState('');
+  const [metodoPago, setMetodoPago] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
     if (open) {
       cargarProductos();
-      limpiarFormulario(); // Limpia el formulario al abrir
+      limpiarFormulario();
     }
   }, [open]);
 
@@ -40,6 +45,8 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
   const limpiarFormulario = () => {
     setProductoSeleccionado('');
     setCantidad(1);
+    setVendidoPor('');
+    setMetodoPago('');
     setMensaje('');
   };
 
@@ -47,12 +54,17 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
     setCargando(true);
     setMensaje('');
     try {
-      const data = await crearVenta(productoSeleccionado, cantidad);
+      const data = await crearVenta({
+        nombre_producto: productoSeleccionado,
+        cantidad,
+        vendido_por: vendidoPor,
+        metodo_pago: metodoPago,
+      });
       setMensaje(data.mensaje);
       onVentaRegistrada();
-      limpiarFormulario(); // Limpia después del registro exitoso
+      limpiarFormulario();
     } catch (err) {
-      setMensaje(err.message);
+      setMensaje(err.message || 'Error al registrar venta');
     } finally {
       setCargando(false);
     }
@@ -72,6 +84,7 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
         </Typography>
       </DialogTitle>
       <DialogContent>
+        {/* Producto */}
         <TextField
           select
           fullWidth
@@ -92,6 +105,7 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
           ))}
         </TextField>
 
+        {/* Cantidad */}
         <TextField
           type="number"
           label="Cantidad"
@@ -100,11 +114,52 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
           onChange={(e) => setCantidad(Number(e.target.value))}
           inputProps={{ min: 1 }}
           sx={{
+            mb: 2,
             '& label.Mui-focused': { color: '#e91e63' },
             '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#e91e63' },
           }}
         />
 
+        {/* Vendido por */}
+        <TextField
+          select
+          fullWidth
+          label="Vendido por"
+          value={vendidoPor}
+          onChange={(e) => setVendidoPor(e.target.value)}
+          sx={{
+            mb: 2,
+            '& label.Mui-focused': { color: '#e91e63' },
+            '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#e91e63' },
+          }}
+        >
+          {vendedores.map((v) => (
+            <MenuItem key={v} value={v}>
+              {v}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        {/* Método de pago */}
+        <TextField
+          select
+          fullWidth
+          label="Método de pago"
+          value={metodoPago}
+          onChange={(e) => setMetodoPago(e.target.value)}
+          sx={{
+            '& label.Mui-focused': { color: '#e91e63' },
+            '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#e91e63' },
+          }}
+        >
+          {metodosPago.map((m) => (
+            <MenuItem key={m} value={m}>
+              {m}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        {/* Mensaje */}
         {mensaje && (
           <Alert sx={{ mt: 2 }} severity={mensaje.includes('exitosamente') ? 'success' : 'error'}>
             {mensaje}
@@ -121,7 +176,7 @@ const RegistrarVentaModal = ({ open, onClose, onVentaRegistrada }) => {
         <Button
           onClick={registrarVenta}
           variant="contained"
-          disabled={cargando || !productoSeleccionado}
+          disabled={cargando || !productoSeleccionado || !vendidoPor || !metodoPago}
           sx={{
             backgroundColor: '#e91e63',
             color: 'white',

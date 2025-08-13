@@ -23,8 +23,6 @@ import {
   obtenerMargenVentas,
 } from '../api/ventas';
 
-
-
 const localeText = {
   noRowsLabel: 'No hay ventas registradas',
   footerTotalRows: 'Total de ventas:',
@@ -48,8 +46,8 @@ const VerVentasTabla = () => {
     setLoading(true);
     try {
       const data = await obtenerVentas();
-      const conId = data.map((v, idx) => ({ ...v, id: idx }));
-      setVentas(conId);
+      const ventasIndividuales = data.filter(v => v.tipo_venta === 'Individual');
+      setVentas(ventasIndividuales);
     } catch (error) {
       setMensaje(error.message);
     } finally {
@@ -67,26 +65,26 @@ const VerVentasTabla = () => {
   };
 
   const handleBuscar = async () => {
-    setLoading(true);
+    if (!busqueda.trim()) {
+      setMensaje('Por favor, ingresa un nombre o identificador de venta.');
+      return;
+    }
+
     setMensaje('');
+    setLoading(true);
+
     try {
-      if (!busqueda.trim()) {
-        await cargarTodasLasVentas();
-        return;
+      let data;
+      if (/^[A-Z0-9\-]{8,36}$/i.test(busqueda)) {
+        data = await obtenerVentaPorId(busqueda);
+      } else {
+        data = await obtenerVentasPorNombre(busqueda);
       }
 
-      if (/^[A-Z0-9\-]{8}$/i.test(busqueda)) {
-        const data = await obtenerVentaPorId(busqueda);
-        const conId = data.map((v, idx) => ({ ...v, id: idx }));
-        setVentas(conId);
-      } else {
-        const data = await obtenerVentasPorNombre(busqueda);
-        const conId = data.map((v, idx) => ({ ...v, id: idx }));
-        setVentas(conId);
-      }
-    } catch (error) {
+      setVentas(Array.isArray(data) ? data : [data]);
+    } catch (err) {
+      setMensaje(err.message);
       setVentas([]);
-      setMensaje(error.message);
     } finally {
       setLoading(false);
     }
@@ -119,11 +117,13 @@ const VerVentasTabla = () => {
   };
 
   const columnas = [
-    { field: 'id', headerName: 'ID', width: 70 },
     { field: 'identificador_unico', headerName: 'Código', width: 150 },
     { field: 'nombre_producto', headerName: 'Producto', width: 200 },
     { field: 'precio', headerName: 'Precio (COP)', width: 130 },
     { field: 'fecha_venta', headerName: 'Fecha de venta', width: 180 },
+    { field: 'vendido_por', headerName: 'Vendido por', width: 150 },
+    { field: 'metodo_pago', headerName: 'Método de pago', width: 130 },
+    { field: 'tipo_venta', headerName: 'Tipo de venta', width: 150 },
   ];
 
   return (
@@ -158,14 +158,11 @@ const VerVentasTabla = () => {
             backgroundColor: '#e91e63',
             color: 'white',
             fontWeight: 'bold',
-            '&:hover': {
-              backgroundColor: '#c2185b',
-            },
+            '&:hover': { backgroundColor: '#c2185b' },
           }}
         >
           Descargar Ventas
         </Button>
-
       </Box>
 
       <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
@@ -216,8 +213,8 @@ const VerVentasTabla = () => {
       ) : (
         <DataGrid
           rows={ventas}
+          getRowId={(row) => row.identificador_unico} // 🔹 Corrección aquí
           columns={columnas}
-          getRowId={(row) => row.id}
           autoHeight
           pageSize={5}
           rowsPerPageOptions={[5, 10, 25]}

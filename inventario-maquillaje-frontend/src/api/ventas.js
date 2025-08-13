@@ -12,23 +12,50 @@ export const obtenerVentas = async () => {
 
 export const obtenerVentasPorNombre = async (nombre) => {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API}/ventas/producto/${nombre}`, {
+  const nombreLimpio = nombre.trim();
+  const res = await fetch(`${API}/ventas/producto/nombre/${encodeURIComponent(nombreLimpio)}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `No se encontraron ventas para ${nombre}`);
-  return data.ventas;
+  if (!res.ok) throw new Error(data.error || `No se encontraron ventas para ${nombreLimpio}`);
+
+  if (data.ventas) {
+    return data.ventas.map(v => ({
+      ...v,
+      nombre_producto: data.nombre_producto 
+    }));
+  }
+
+  return Array.isArray(data) ? data : [data];
 };
+
+
 
 export const obtenerVentaPorId = async (id) => {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API}/ventas/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+
+  const res = await fetch(
+    `${API}/ventas/producto/id/${encodeURIComponent(id)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Venta no encontrada');
-  return [data];
+
+  if (!res.ok) {
+    throw new Error(
+      data.error || `No se encontró la venta con ID ${id}`
+    );
+  }
+
+  return Array.isArray(data) ? data : [data];
 };
+
+
+
 
 export const obtenerMargenVentas = async () => {
   const token = localStorage.getItem('token');
@@ -53,7 +80,7 @@ export const obtenerProductosDisponibles = async () => {
   return nombresUnicos;
 };
 
-export const crearVenta = async (nombre_producto, cantidad) => {
+export const crearVenta = async ({ nombre_producto, cantidad, vendido_por, metodo_pago }) => {
   const token = localStorage.getItem('token');
   const res = await fetch(`${API}/ventas/crearVenta`, {
     method: 'POST',
@@ -61,9 +88,10 @@ export const crearVenta = async (nombre_producto, cantidad) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ nombre_producto, cantidad }),
+    body: JSON.stringify({ nombre_producto, cantidad, vendido_por, metodo_pago }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Error al registrar venta');
   return data;
 };
+

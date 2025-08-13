@@ -59,7 +59,7 @@ const InventarioResumen = () => {
 
   return (
     <Box>
-      {}
+      {/* Botones superiores */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <Button
           variant="contained"
@@ -96,6 +96,7 @@ const InventarioResumen = () => {
         </Button>
       </Box>
 
+      {/* Resumen de inventario */}
       <Typography variant="h5" fontWeight="bold" gutterBottom color="#e91e63">
         Resumen del Inventario
       </Typography>
@@ -107,10 +108,12 @@ const InventarioResumen = () => {
         </Typography>
         <Typography variant="h6">
           <MonetizationOnIcon sx={{ verticalAlign: 'middle', mr: 1, color: '#e91e63' }} />
-          Valor total del inventario: <b>${datos.total_inventario_COP.toLocaleString()}</b>
+          Valor total del inventario:{' '}
+          <b>${Number(datos.total_inventario_COP).toLocaleString()}</b>
         </Typography>
       </Paper>
 
+      {/* Lista de productos */}
       <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="h6" gutterBottom>
           Productos en Inventario

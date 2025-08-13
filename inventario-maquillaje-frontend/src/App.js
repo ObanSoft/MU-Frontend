@@ -7,6 +7,7 @@ import Invenatarios from './pages/Inventarios';
 import CambioEstado from './pages/CambioEstado'; 
 import Ventas from './pages/Ventas';
 import Reportes from './pages/Reportes';
+import CombosPage from './pages/CombosPage';
 import RequireAuth from './api/RequireAuth';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/cambio-estado" element={<RequireAuth><CambioEstado /></RequireAuth>} />
         <Route path="/ventas" element={<RequireAuth><Ventas /></RequireAuth>} />
         <Route path="/reportes" element={<RequireAuth><Reportes /></RequireAuth>} />
+        <Route path="/combos" element={<RequireAuth><CombosPage /></RequireAuth>} />
       </Routes>
     </Router>
   );
